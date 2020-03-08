@@ -12,3 +12,4 @@
 - [ ] [[7] Audio-Visual Speech Enhancement using Hierarchical Extreme Learning Machine](https://ieeexplore.ieee.org/document/8903105)
 - [ ] [[8] AV Speech Enhancement Challenge using a Real Noisy Corpus](https://arxiv.org/abs/1910.00424)
 - [ ] [[9] Audio-visual Speech Enhancement Using Conditional Variational Auto-Encoder](https://arxiv.org/abs/1908.02590) | [note](./notes/note_9.md)
+- [ ] [[12] Visual Speech Enhancement](https://arxiv.org/abs/1711.08789) | [note](./notes/note_12.md)
