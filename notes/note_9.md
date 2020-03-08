@@ -50,4 +50,120 @@ $$
 $$
 其中，$d_\mathrm{IS}(x;y)=x/y-\ln(x/y)-1$是Itakura-Saito发散度[36]。最后，使用采样技术结合所谓的“重新参数化技巧” [47]来逼近（5）中的棘手的期望，可以得到一个目标函数，该目标函数在$\mathbf{\theta}$和$\mathbf{\psi}$上均是可微的，并且可以使用梯度上升算法进行优化[47]。图1总结了A-VAE语音先验的编码器-解码器体系结构。
 
-Visual_VAE-现在，我们介​​绍两个VAE网络变体，用于从视觉数据中先学习语音，它们分别称为基本视觉VAE（V-VAE）和增强型V-VAE，在图2中进行了概述。可以看出，该体系结构类似于A-VAE ，这与输入的视觉观察结果（即嘴唇图像）具有明显的区别。更详细地，标准的计算机视觉算法用于从说话的脸部图像中提取固定大小的边界框，并以嘴唇为中心例如一个嘴唇ROI。使用两层完全连接的网络（以下称为基础网络）将此ROI嵌入到视觉特征向量$\mathbf{v}_n\in\mathbb{R}^M$中，该网络具有视觉嵌入的尺寸。可选地，可以使用由3D组成的其他预先训练的前端网络（虚线框）然后是具有34层的ResNet，然后是卷积层，是为监督有声视听识别任务而专门培训的网络的一部分[55]。第二个选项称为augmented V-VAE.
+Visual_VAE-现在，我们介​​绍两个VAE网络变体，用于从视觉数据中学习语音先验，它们分别称为基本视觉VAE（V-VAE）和增强型V-VAE，在图2中进行了概述。可以看出，该体系结构类似于A-VAE ，但有明显的区别，输入是视觉观察结果（即嘴唇图像）。更详细地，标准的计算机视觉算法用于从说话的脸部图像中提取固定大小的边界框，并以嘴唇为中心例如一个嘴唇ROI。使用两层完全连接的网络（以下称为基础网络）将此ROI嵌入到视觉特征向量$\mathbf{v}_n\in\mathbb{R}^M$中，$M$是视觉嵌入的尺寸。视情况而定，可以使用由3D卷积层组成的附加的预先训练的前端网络（虚线框），然后是具有34层的ResNet，作为专门为监督视听语音识别而训练的网络的一部分[55]。第二个选项称为augmented V-VAE.
+
+在变分推论[53]，[54]中，可以考虑潜在变量$\mathbf{z}$的任何分布来近似难处理的后验$p(\mathbf{z}|\mathbf{s};\mathbf{\theta})$并定义ELBO。对于V-VAE模型，我们探索使用近似后验分布$q(\mathbf{z}|\mathbf{v};\mathbf{\gamma})$定义为：
+$$
+z_{l n} | \mathbf{v}_{n} \sim \mathcal{N}(\bar{\mu}_{l}(\mathbf{v}_{n}), \bar{\sigma}_{l}(\mathbf{v}_{n})) \tag{6}
+$$
+其中$\mathbf{v}=\{\mathbf{v}_n\}^{N_{tr}-1}_{n=0}$是视觉特征的训练集，其中非线性函数$\{\bar{\mu}_{l}: \mathbb{R}^{M} \mapsto \mathbb{R}\}_{l=0}^{L-1}$和$\{\bar{\sigma}_{l}: \mathbb{R}^{M} \mapsto \mathbb{R}\}_{l=0}^{L-1}$共同由$\gamma$参数化的神经网络建模，需要输入$\mathbf{v}_n$。请注意，V-VAE和A-VAE共享相同的解码器体系结构，即（1）。最终，V-VAE的目标函数具有与（5）相同的结构，因此可以使用与上述相同的梯度上升算法来估计V-VAE网络的参数。
+
+Audio-Visual VAE-现在我们研究视听VAE模型，即将音频语音与视觉语音相结合的模型。这种多模态方法背后的理由是音频数据经常被噪声破坏，而视觉数据却没有。在不失一般性的前提下，将假定音频和视频数据是同步的，即每个音频帧都与一个视频帧相关联。
+
+为了结合上述A-VAE和V-VAE公式，我们考虑CVAE框架以学习结构化输出表示[25]。在训练中，将为CVAE提供数据以及相关的类别标签，以使网络能够学习结构化的数据分布。在测试中，为受过训练的网络提供类别标签，以从相应的类别中生成样本。 CVAE已被证明对于缺失值推断问题非常有效，例如，输入输出对部分可用的计算机视觉问题[25]。
+
+在AV语音增强的情况下，我们考虑对AV特征的$N_{tr}$个同步帧进行训练，即$(\mathbf{s,v})=\{(\mathbf{s}_n,\mathbf{v}_n)\}^{N_{tr}-1}_{n=0}$，其中，如上所述，$\mathbf{V}_n\in\mathbb{R}^M$是嘴唇ROI嵌入。干净的语音仅在训练时可用，有条件于观察到的视觉语音。然而，视觉信息在训练和测试时都是可用的，因此，它作为所需的清晰音频语音的确定性先验。有趣的是，它也影响$\mathbf{z}_n$的先验分布。总结一下，考虑以下潜在空间模型，独立于虑所有的$l\in\{0,\ldots,L-1\}$和所有TF单元$(f,n)$：
+$$
+\mathbf{s}_{f n} | \mathbf{z}_{n}, \mathbf{v}_{n} \sim \mathcal{N}_{c}(0, \sigma_{f}(\mathbf{z}_{n}, \mathbf{v}_{n})) \tag{7}
+$$
+$$
+z_{l n} | \mathbf{v}_{n} \sim \mathcal{N}(\bar{\mu}_{l}(\mathbf{v}_{n}), \bar{\sigma}_{l}(\mathbf{v}_{n})) \tag{8}
+$$
+其中非线性函数$\{\sigma_{f}: \mathbb{R}^{L} \times \mathbb{R}^{M} \mapsto \mathbb{R}_{+}\}_{f=0}^{F-1}$被建模为由$\mathbf{\theta}$参数化并接受$\mathbf{z}_{n}$和$\mathbf{v}_{n}$输入的神经网络，并且其中(8)与(6)相同，但是相应的参数集γ将具有不同的估计，如下所述。另外，请注意，(1)和(7)中的$\sigma_f$是不同的，但它们都对应于生成语音模型的功率谱密度。这助长了贯穿整篇论文的记号的滥用。建议的体系结构称为AV-CVAE，如图3所示。与第三节和图1的A-VAE和第四节和图2的V-VAE相比，$\mathbf{z}_n$先验分布的均值和方差由视觉输入决定。
+
+现在我们引入分布$q(\mathbf{z}|\mathbf{s},\mathbf{v};\mathbf{\psi})$，它逼近如上所述的难以处理的后验分布$p(\mathbf{z}|\mathbf{s},\mathbf{v};\mathbf{\theta})$，独立于所有$l\in\{0,\ldots,L-1\}$和所有帧：
+$$
+z_{l n} | \mathbf{s}_{n}, \mathbf{v}_{n} \sim \mathcal{N}(\tilde{\mu}_{l}(\tilde{\mathbf{s}}_{n}, \mathbf{v}_{n}), \tilde{\sigma}_{l}(\tilde{\mathbf{s}}_{n}, \mathbf{v}_{n})) \tag{9}
+$$
+其中非线性函数$\{\tilde{\mu}_{l}: \mathbb{R}_{+}^{F} \times \mathbb{R}^{M} \mapsto \mathbb{R}\}_{l=0}^{L-1}$和$\{\tilde{\sigma}_{l}: \mathbb{R}_{+}^{F} \times \mathbb{R}^{M} \mapsto \mathbb{R}\}_{l=0}^{L-1}$共同建模为编码器神经网络，该编码器神经网络由$\mathbf{\psi}$参数化，该编码器神经网络在每帧将语音功率谱及其关联的视觉特征向量作为输入。模型参数的完整集合，即$\mathbf{\gamma}$，$\mathbf{\theta}$和$\mathbf{\psi}$，可以通过最大化训练数据集上的条件对数似然$\ln p(\mathbf{s}|\mathbf{v};\mathbf{\theta},\mathbf{\gamma})$的下界来估计，定义如下：
+$$
+\begin{aligned} \mathcal{L}_{\text {av-cvae }}(\mathbf{s}, \mathbf{v} ; \mathbf{\theta}, \mathbf{\psi}, \mathbf{\gamma}) &=\mathbb{E}_{q(\mathbf{z} | \mathbf{s}, \mathbf{v} ; \mathbf{\psi})}[\ln p(\mathbf{s} | \mathbf{z}, \mathbf{v} ; \mathbf{\theta})] \\ &-D_{\mathbf{K L}}(q(\mathbf{z} | \mathbf{s}, \mathbf{v} ; \mathbf{\psi}) \| p(\mathbf{z} | \mathbf{v} ; \mathbf{\gamma})) \end{aligned} \tag{10}
+$$
+其中$\mathbf{z}=\{\mathbf{z}_{n} \in \mathbb{R}^{L}\}_{n=0}^{N_{t r}-1}$。这种网络体系结构似乎对于手头的任务非常有效。实际上，如果看一下（10）中的成本函数，可以看出$\mathbf{K L}$项实现了$q(\mathbf{z} | \mathbf{s}, \mathbf{v} ; \mathbf{\psi})=p(\mathbf{z} | \mathbf{v} ; \gamma)$的最优值。从图3中可以看出，这可以通过忽略音频输入的贡献来发生。此外，代价函数（10）中的第一项试图在解码器的输出处尽可能地重构音频语音矢量。这可以通过在编码器的输入中尽可能多地使用音频矢量来完成。这与第二项的最佳行为相反，后者试图忽略音频输入。通过最小化总成本，可以将视频和音频信息融合到编码器中。
+
+在AV-CVAE训练期间，从编码器建模的近似后验采样的变量$\mathbf{z}_n$，然后将其传递到解码器。但是，在测试时，仅使用解码器和先前的网络，而丢弃编码器。因此，从先前的网络采样$\mathbf{z}_n$，这与编码器网络基本不同。成本函数（10）中的KL散度项负责尽可能减少回归与先前网络之间的差异。人们甚至可以通过对KL散度项加权$\beta>1$来控制这一点：
+$$
+\begin{aligned} \mathcal{L}_{\beta \text { -av-cvae }}(\mathbf{s}, \mathbf{v} ; \mathbf{\theta}, \mathbf{\psi}, \mathbf{\gamma}) &=\mathbb{E}_{q(\mathbf{z} | \mathbf{s}, \mathbf{v} ; \mathbf{\psi})}[\ln p(\mathbf{s} | \mathbf{z}, \mathbf{v} ; \mathbf{\theta})] \\ &-\beta D_{K L}(q(\mathbf{z} | \mathbf{s}, \mathbf{v} ; \mathbf{\psi}) \| p(\mathbf{z} | \mathbf{v} ; \mathbf{\gamma})) \end{aligned} \tag{11}
+$$
+这是在[56]中引入的，即$\beta$-VAE，并被证明有助于自动发现可解释的因子化潜在表示。但是，在提出的AV-CVAE体系结构的情况下，我们遵循[25]中提出的不同策略，以缩小认知与现有网络之间的差距。结果，对（10）中定义的ELBO进行了如下修改：
+$$
+\begin{aligned} \tilde{\mathcal{L}}_{\text {av-cvae }}(\mathbf{s}, \mathbf{v} ; \mathbf{\theta}, \mathbf{\psi}, \mathbf{\gamma}) &=\alpha \mathcal{L}_{\text {av-cvae }}(\mathbf{s}, \mathbf{v} ; \mathbf{\theta}, \mathbf{\psi}, \mathbf{\gamma}) \\ &+(1-\alpha) \mathbb{E}_{p(\mathbf{z} | \mathbf{v} ; \mathbf{\gamma})}[\ln p(\mathbf{s} | \mathbf{z}, \mathbf{v} ; \mathbf{\theta})] \end{aligned} \tag{12}
+$$
+其中$0\le\alpha\le1$是一个权衡参数。请注意，原始ELBO是通过设置α= 1来获得的。上述成本函数右侧的新项实际上是（10）中的原始重建成本，但每个$\mathbf{z}_n$都是从先验分布中采样的，即$p(\mathbf{z}_n|\mathbf{v}_n;\mathbf{\gamma})$。这样，现有网络被迫学习适合于重构相应语音帧的潜在矢量。如下所示，该方法显着提高了整体语音增强性能。
+
+为了在（12）中建立成本函数，我们注意到KL-散度项采用封闭形式的解，因为所有分布都是高斯分布。此外，由于关于$\mathbf{z}_n$的近似后验和先验的期望不易处理，因此我们通常在实践中使用蒙特卡罗估计对它们进行近似。经过一些数学上的操作后，获得以下成本函数：
+$$
+\begin{aligned}
+\tilde{\mathcal{L}}_{\mathrm{av}-\mathrm{cvae}}&(\mathbf{s}, \mathbf{v} ; \mathbf{\theta}, \mathbf{\psi}, \mathbf{\gamma}) \\
+=& \frac{1}{R} \sum_{r=1}^{R} \sum_{n=0}^{N_{t r}-1}(\alpha \ln p(\mathbf{s}_{n} | \mathbf{z}_{n, 1}^{(r)}, \mathbf{v}_{n} ; \mathbf{\theta}).\\
++&.(1-\alpha) \ln p(\mathbf{s}_{n} | \mathbf{z}_{n, 2}^{(r)}, \mathbf{v}_{n} ; \mathbf{\theta})) \\
++& \frac{\alpha}{2} \sum_{l=0}^{L-1} \sum_{n=0}^{N_{t r}-1}(\ln \frac{\tilde{\sigma}_{l}(\tilde{\mathbf{s}}_{n}, \mathbf{v}_{n})}{\bar{\sigma}_{l}(\mathbf{v}_{n})}.\\
+-&.\frac{\ln \tilde{\sigma}_{l}(\tilde{\mathbf{s}}_{n}, \mathbf{v}_{n})+(\tilde{\mu}_{l}(\tilde{\mathbf{s}}_{n}, \mathbf{v}_{n})-\bar{\mu}_{l}(\mathbf{v}_{n}))^{2}}{\bar{\sigma}_{l}(\mathbf{v}_{n})})
+\end{aligned} \tag{13}
+$$
+其中$\mathbf{z}_{n, 1}^{(r)} \sim q(\mathbf{z}_{n} | \mathbf{s}_{n}, \mathbf{v}_{n} ; \mathbf{\psi})$和$\mathbf{z}_{n, 2}^{(r)} \sim p(\mathbf{z}_{n} | \mathbf{v}_{n} ; \mathbf{\gamma})$。可以通过与经典VAE类似的方式来优化此成本函数，即通过将重新参数化技巧与随机梯度上升算法一起使用来进行优化。请注意，重新参数化技巧必须使用两次，对$\mathbf{z}_{n, 1}^{(r)}$和对$\mathbf{z}_{n, 2}^{(r)}$。
+
+AV-CVAE for Speech Enhancement-本节介绍了基于提出的AV-CVAE语音模型的语音增强算法。它与[20]中提出的使用VAE进行纯音频语音增强的算法非常相似。首先提出了无监督噪声模型，其次是混合模型，并提出了估计噪声模型参数的算法。最后，描述了干净的语音推理过程。通过本节，$\mathbf{v}=\{\mathbf{v}_n\}^{N-1}_{n=0}$，$\mathbf{s}=\{\mathbf{s}_n\}^{N-1}_{n=0}$和$\mathbf{z}=\{\mathbf{z}_n\}^{N-1}_{n=0}$表示测试集的视觉特征，清晰语音STFT特征和潜在向量。这些变量与$N$帧的噪声语音测试序列相关。应当注意，测试数据与前几节中使用的训练数据不同。观察到的麦克风（混合物）帧用$\mathbf{x}=\{\mathbf{x}_n\}^{N-1}_{n=0}$表示。
+
+Unsupervised Noise Model-像[19]，[20]中一样，我们使用基于NMF的无监督高斯噪声模型，该模型假设在TF单元间是独立的：
+$$
+b_{fn}\sim\mathcal{N}_c(0, (\mathbf{W}_b\mathbf{H}_b)_{fn}) \tag{14}
+$$
+其中$\mathbf{W}_{b} \in \mathbb{R}_{+}^{F \times K}$是频谱功率模式的非负矩阵，而$\mathbf{H}_{b} \in \mathbb{R}_{+}^{K \times N}$是时间激活的非负矩阵，选择$K$使得$K(F+N)\leqslant FN$ [36]。我们提醒您，需要根据观察到的麦克风信号来估算$\mathbf{W}_{b}$和$\mathbf{H}_{b}$。
+
+Mixture Model-观察到的混合物（麦克风）信号的模型如下：
+$$
+x_{fn}=\sqrt{g_n}s_{fn}+b_{fn} \tag{15}
+$$
+对于所有TF单元$(f,n)$，其中$g_n\in\mathbb{R}_+$表示与帧有关且与频率无关的增益，如[20]中所描述的。考虑到跨帧的语音信号的可能高度变化的响度，该增益提供了AV-CVAE模型的鲁棒性。让我们用$\mathbf{g}=(g_0\ldots g_{N-1})^T$表示必须估计的增益参数的向量。进一步假设语音和噪声信号是相互独立的，因此通过组合（7），（14）和（15），我们可以获得所有TF单元$(f,n)$：
+$$
+x_{f n} | \mathbf{z}_{n}, \mathbf{v}_{n} \sim \mathcal{N}_{c}(0, g_{n} \sigma_{f}(\mathbf{z}_{n}, \mathbf{v}_{n})+(\mathbf{W}_{b} \mathbf{H}_{b})_{f, n}) \tag{16}
+$$
+让$\mathbf{x}_n\in\mathbb{C}^F$是向量，其分量为$n$帧处噪声混合的STFT系数。
+
+Parameter Estimation-在定义了语音生成模型（7）和观察到的混合模型（16）之后，推理过程需要从观察到的STFT系数$\mathbf{x}$和观察到的视觉特征$\mathbf{v}$的集合中估计模型参数的集合$\mathbf{\phi}=\{\mathbf{W}_{b}, \mathbf{H}_{b}, \mathbf{g}\}$。然后，这些参数将用于估计干净语音的STFT系数。由于相对于潜在变量的积分是难处理的，因此不可能直接进行最大似然估计。另外，可以利用模型的潜在变量结构来推导期望最大化（EM）算法[57]。从一组初始的模型参数$\phi^\star$开始，EM直到收敛包括迭代：
+-E步：计算$Q(\mathbf{\phi} ; \mathbf{\phi}^{\star})=\mathbb{E}_{p(\mathbf{z} | \mathbf{x}, \mathbf{v} ; \mathbf{\phi}^{\star})}[\ln p(\mathbf{x}, \mathbf{z}, \mathbf{v} ; \mathbf{\phi})]$
+-M步：更新$\phi^{\star} \leftarrow \operatorname{argmax}_{\phi} Q(\phi ; \phi^{\star})$
+1）E-步：由于观测值与（16）中的潜在变量之间存在非线性关系，因此我们无法计算后验分布$p(\mathbf{z}|\mathbf{x}, \mathbf{v} ; \mathbf{\phi})$，因此无法解析地评估$Q(\phi ; \phi^{\star})$。如[20]中所示，我们因此依赖于以下蒙特卡洛近似：
+$$
+\begin{aligned}
+& Q\left(\phi ; \phi^{\star}\right) \approx \tilde{Q}\left(\phi ; \phi^{\star}\right)\\
+& \stackrel{c}{=}-\frac{1}{R} \sum_{r=1}^{R} \sum_{(f, n)}\left(\ln \left(g_{n} \sigma_{f}\left(\mathbf{z}_{n}^{(r)}, \mathbf{v}_{n}\right)+\left(\mathbf{W}_{b} \mathbf{H}_{b}\right)_{f, n}\right)\right.\\
+& \left.+\frac{\left|x_{f n}\right|^{2}}{g_{n} \sigma_{f}\left(\mathbf{z}_{n}^{(r)}, \mathbf{v}_{n}\right)+\left(\mathbf{W}_{b} \mathbf{H}_{b}\right)_{f, n}}\right)
+\end{aligned} \tag{17}
+$$
+其中，$\stackrel{c}{=}$表示等于不依赖于$\phi$和$\phi^{\star}$的加法项，其中$\{\mathbf{z}_n^{(r)}\}^R_{r=1}$是使用马尔可夫链蒙特卡洛（MCMC）从后验$p\left(\mathbf{z}_{n} | \mathbf{x}_{n}, \mathbf{v}_{n} ; \mathbf{\phi}^{\star}\right)$提取的样本序列采样。在实践中，我们使用Metropolis-Hastings算法[58]，该算法构成了MCEM算法[52]的基础。在它们的Metropolis-Hastings算法的第$m$个迭代中，并且对于$n\in\{0,\ldots,N-1\}$独立，首先从随机游动分布中抽取出一个样本$\mathbf{z}_n$:
+$$
+\mathbf{z}_{n} | \mathbf{z}_{n}^{(m-1)} ; \epsilon^{2} \sim \mathcal{N}(\mathbf{z}_{n}^{(m-1)}, \epsilon^{2} \mathbf{I}) \tag{18}
+$$
+.....
+Speech Reconstruction-令$\phi^\star=\{\mathbf{w}_b^*,\mathbf{H}_b^*,\mathbf{g}^*\}$表示由上述MCEM算法估计的参数集。令$\tilde{\mathbf{s}}_{f n}=\sqrt{g_{n}^{*}} s_{f n}$为（15）中引入的语音STFT系数的缩放版本，其中$g_n^*=(\mathbf{g}^*)_n$。最后一步是根据它们的后验均值估计这些系数[20]：
+$$
+\begin{aligned}
+\hat{\tilde{s}}_{f n} &=\mathbb{E}_{p\left(\tilde{s}_{f n} | x_{f n}, \mathbf{v}_{n} ; \boldsymbol{\phi}^{*}\right)}\left[\tilde{s}_{f n}\right] \\
+&=\mathbb{E}_{p\left(\mathbf{z}_{n} | \mathbf{x}_{n}, \mathbf{v}_{n} ; \boldsymbol{\phi}^{*}\right)}\left[\mathbb{E}_{\left.p\left(\tilde{s}_{f n} | \mathbf{z}_{n}, \mathbf{v}_{n}, \mathbf{x}_{n} ; \boldsymbol{\phi}^{*}\right)\left[\tilde{s}_{f n}\right]\right]}\right.\\
+&=\mathbb{E}_{p\left(\mathbf{z}_{n} | \mathbf{x}_{n}, \mathbf{v}_{n} ; \boldsymbol{\phi}^{*}\right)}\left[\frac{g_{n}^{*} \sigma_{f}^{2}\left(\mathbf{z}_{n}, \mathbf{v}_{n}\right)}{g_{n}^{*} \sigma_{f}^{2}\left(\mathbf{z}_{n}, \mathbf{v}_{n}\right)+\left(\mathbf{W}_{b}^{*} \mathbf{H}_{b}^{*}\right)_{f, n}}\right] x_{f n}
+\end{aligned} \tag{23}
+$$
+该估计对应于维纳滤波的“概率”版本，其中对潜在变量的后验分布进行平均滤波。如上所述，不能通过分析来计算此期望，而是可以使用与第VI-C1节相同的Metropolis-Hastings算法来近似。最终，从具有重叠叠加的逆STFT中获得语音信号的时域估计。
+
+算法1中总结了完整的语音增强过程，我们将其称为AV-CVAE语音增强。
+
+Algorithm  1
+Audio-visual CVAE speech enhancement
+
+1. Inputs:
+   - Learned CVAE generative model for clean speech, i.e.,(7) and (9).
+   - Noisy microphone frames $\mathbf{x}=\{\mathbf{x}_n\}_{n=0}^{N-1}$.
+   - Video frames$\mathbf{v}=\{\mathbf{v}_n\}_{n=0}^{N-1}$.
+2. Initialization:
+   - Initialization  of  NMF noise parameters $H_b$ and $W_b$ with random nonnegative values.
+   - Initialization  of  latent  codes $\mathbf{z}=\{\mathbf{z}_n\}_{n=0}^{N-1}$ using  the learned  encoder  network  (9)  with $\mathbf{x}=\{\mathbf{x}_n\}_{n=0}^{N-1}$ and $\mathbf{v}=\{\mathbf{v}_n\}_{n=0}^{N-1}$.
+   - Initialization of the gain vector $\mathbf{g}=(g_0,\ldots,g_{N-1})^{\top}=\mathbf{1}$
+3. while stop criterion not met do:
+4. E-step: Compute (17) using the Metropolis-Hastings algorithm
+5. M-$\mathbf{H}_b$-step: Update $\mathbf{H}_b$ using (20)
+6. M-$\mathbf{W}_b$-step: Update $\mathbf{W}_b$ using (21)
+7. M-$\mathbf{g}$-step: Update $\mathbf{g}$ using (22)
+8. end while
+9. Speech reconstruction: Estimate $\mathbf{s}=\{\mathbf{s}_n\}_{n=0}^{N-1}$ with (23)
