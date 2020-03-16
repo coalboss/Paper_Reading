@@ -153,7 +153,7 @@ Grid和TCD-TIMIT语料库以$25\text{ fps}$录制。但是，以ffm-peg [36]将�
 
 ### 5.4. Objective testing on Synthetic mixtures
 
-使用以下评估语音清晰度的客观指标和上述合成AV数据集评估重新合成的语音的质量(第5.1节) 
+使用以下评估语音清晰度的客观指标和上述合成AV数据集评估重新合成的语音的质量(第5.1节)
 
 #### 5.4.1. Perceptual Evaluation of Speech quality (PESQ) comparison
 
