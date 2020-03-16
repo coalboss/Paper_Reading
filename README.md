@@ -12,7 +12,7 @@
 - [ ] [[7] Audio-Visual Speech Enhancement using Hierarchical Extreme Learning Machine](https://ieeexplore.ieee.org/document/8903105)
 - [ ] [[8] AV Speech Enhancement Challenge using a Real Noisy Corpus](https://arxiv.org/abs/1910.00424)
 - [x] [[9] Audio-visual Speech Enhancement Using Conditional Variational Auto-Encoder](https://arxiv.org/abs/1908.02590) | [note](./notes/note_9.md)
-- [ ] [[10] CochleaNet: A Robust Language-independent Audio-Visual Model for Speech Enhancement](https://arxiv.org/abs/1909.10407)
+- [x] [[10] CochleaNet: A Robust Language-independent Audio-Visual Model for Speech Enhancement](https://arxiv.org/abs/1909.10407) | [note](./notes/note_10.md)
 - [x] [[12] Visual Speech Enhancement](https://arxiv.org/abs/1711.08789) | [note](./notes/note_12.md)
 - [x] [[15] Seeing Through Noise: Visually Driven Speaker Separation and Enhancement](https://arxiv.org/abs/1708.06767) | [note](./notes/note_15.md)
 - [x] [[16] Audiovisual Speech Source Separation: An overview of key methodologies](https://ieeexplore.ieee.org/abstract/document/6784034) | [note](./notes/note_16.md)
