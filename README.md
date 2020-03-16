@@ -16,3 +16,4 @@
 - [x] [[12] Visual Speech Enhancement](https://arxiv.org/abs/1711.08789) | [note](./notes/note_12.md)
 - [x] [[15] Seeing Through Noise: Visually Driven Speaker Separation and Enhancement](https://arxiv.org/abs/1708.06767) | [note](./notes/note_15.md)
 - [x] [[16] Audiovisual Speech Source Separation: An overview of key methodologies](https://ieeexplore.ieee.org/abstract/document/6784034) | [note](./notes/note_16.md)
+- [ ] [[18] Time Domain Audio Visual Speech Separation](https://arxiv.org/abs/1904.03760) | [note](./notes/note_18.md)
