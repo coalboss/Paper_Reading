@@ -5,7 +5,7 @@
 - [x] [[0] Multimodal Machine Learning: A Survey and Taxonomy](https://arxiv.org/abs/1705.09406) | [note](./notes/note_0.md)
 - [x] [[1] Looking to Listen at the Cocktail Party: A Speaker-Independent Audio-Visual Model for Speech Separation](https://arxiv.org/abs/1804.03619) ｜ [note](./notes/note_1.md)
 - [x] [[2] Audio-Visual Speech Enhancement Using Multimodal Deep Convolutional Neural Networks](https://arxiv.org/abs/1703.10893) | [note](./notes/note_2.md)
-- [ ] [[3] Audio-Visual Speech Separation and Dereverberation with a Two-Stage Multimodal Network](https://arxiv.org/abs/1909.07352) | [note](./notes/note_3.md)
+- [ ] [[3] Audio-Visual Speech Separation and Dereverberation with a Two-Stage Multimodal Network](https://arxiv.org/abs/1909.07352) | [note](./notes/note_3.md) ing
 - [ ] [[4] Deep Latent Space Learning for Cross-modal Mapping of Audio and Visual Signals](https://arxiv.org/abs/1909.08685)
 - [x] [[5] Contextual Audio-Visual Switching For Speech Enhancement in Real-World Environments](https://arxiv.org/abs/1808.09825)
 - [x] [[6] The Conversation: Deep Audio-Visual Speech Enhancement](https://arxiv.org/abs/1804.04121) | [note](./notes/note_6.md)
@@ -13,7 +13,7 @@
 - [ ] [[8] AV Speech Enhancement Challenge using a Real Noisy Corpus](https://arxiv.org/abs/1910.00424)
 - [x] [[9] Audio-visual Speech Enhancement Using Conditional Variational Auto-Encoder](https://arxiv.org/abs/1908.02590) | [note](./notes/note_9.md)
 - [x] [[10] CochleaNet: A Robust Language-independent Audio-Visual Model for Speech Enhancement](https://arxiv.org/abs/1909.10407) | [note](./notes/note_10.md)
-- [ ] [[11] Tutorial on Variational Autoencoders](https://arxiv.org/abs/1606.05908)
+- [ ] [[11] Tutorial on Variational Autoencoders](https://arxiv.org/abs/1606.05908) ｜ [note](./notes/note_11.md) ing
 - [x] [[12] Visual Speech Enhancement](https://arxiv.org/abs/1711.08789) | [note](./notes/note_12.md)
 - [ ] [[13] Mixture of Inference Networks for VAE-based Audio-visual Speech Enhancement](https://arxiv.org/abs/1912.10647)
 - [ ] [[14] The Sound of Pixels](https://arxiv.org/abs/1804.03160)
