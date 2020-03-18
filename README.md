@@ -22,3 +22,4 @@
 - [ ] [[17] Using Visual Speech Information in Masking Methods for Audio Speaker Separation](https://ieeexplore.ieee.org/document/8361019)
 - [x] [[18] Time Domain Audio Visual Speech Separation](https://arxiv.org/abs/1904.03760) | [note](./notes/note_18.md)
 - [ ] [[19] Audio-Visual Scene Analysis with Self-Supervised Multisensory Features](https://arxiv.org/abs/1804.03641)
+- [ ] [[23] My lips are concealed: Audio-visual speech enhancement through obstructions](https://arxiv.org/abs/1907.04975) | [note](./notes/note_23.md)
