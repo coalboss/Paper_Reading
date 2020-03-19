@@ -19,7 +19,7 @@
 - [ ] [[14] The Sound of Pixels](https://arxiv.org/abs/1804.03160)
 - [x] [[15] Seeing Through Noise: Visually Driven Speaker Separation and Enhancement](https://arxiv.org/abs/1708.06767) | [note](./notes/note_15.md)
 - [x] [[16] Audiovisual Speech Source Separation: An overview of key methodologies](https://ieeexplore.ieee.org/abstract/document/6784034) | [note](./notes/note_16.md)
-- [ ] [[17] Using Visual Speech Information in Masking Methods for Audio Speaker Separation](https://ieeexplore.ieee.org/document/8361019)
+- [ ] [[17] Using Visual Speech Information in Masking Methods for Audio Speaker Separation](https://ieeexplore.ieee.org/document/8361019) | [note](./notes/note_17.md) ing
 - [x] [[18] Time Domain Audio Visual Speech Separation](https://arxiv.org/abs/1904.03760) | [note](./notes/note_18.md)
 - [ ] [[19] Audio-Visual Scene Analysis with Self-Supervised Multisensory Features](https://arxiv.org/abs/1804.03641)
 - [ ] [[20] Supervised Speech Separation Based on Deep Learning: An Overview](https://arxiv.org/abs/1708.07524)
