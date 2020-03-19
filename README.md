@@ -23,4 +23,4 @@
 - [x] [[18] Time Domain Audio Visual Speech Separation](https://arxiv.org/abs/1904.03760) | [note](./notes/note_18.md)
 - [ ] [[19] Audio-Visual Scene Analysis with Self-Supervised Multisensory Features](https://arxiv.org/abs/1804.03641)
 - [x] [[23] My lips are concealed: Audio-visual speech enhancement through obstructions](https://arxiv.org/abs/1907.04975) | [note](./notes/note_23.md)
-- [ ] [[24] Multimodal SpeakerBeam: Single Channel Target Speech Extraction with Audio-Visual Speaker Clues](https://www.isca-speech.org/archive/Interspeech_2019/abstracts/1513.html) | [note](./notes/note_24.md)
+- [x] [[24] Multimodal SpeakerBeam: Single Channel Target Speech Extraction with Audio-Visual Speaker Clues](https://www.isca-speech.org/archive/Interspeech_2019/abstracts/1513.html) | [note](./notes/note_24.md)
