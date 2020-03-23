@@ -1,6 +1,6 @@
 # Audio-Visual Speech Separation and Dereverberation with a Two-Stage Multimodal Network
 
-这是一篇由腾讯AI Lab的研究者们发布的基于音视频的语音分离+去混响的一篇技术类paper，发表时间20200303，被IEEE JSTSP Special Issue on Deep Learning for Multi-modal Intelligence across Speech, Language, Vision, and Heterogeneous Signals接收。
+这是一篇由腾讯AI Lab的研究者们发布的基于音视频的语音分离+去混响的一篇技术类paper，发表时间2020年3月3日，被IEEE JSTSP Special Issue on Deep Learning for Multi-modal Intelligence across Speech, Language, Vision, and Heterogeneous Signals接收。
 
 ## Abstract
 
